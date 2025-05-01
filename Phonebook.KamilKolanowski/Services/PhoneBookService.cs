@@ -16,11 +16,11 @@ internal class PhoneBookService
         {
             optionsBuilder.UseSqlServer(
                 @"Server=localhost;
-                                                    Database=PhoneBook;
-                                                    User Id=sa;
-                                                    Password=dockerStrongPwd123;
-                                                    Encrypt=False;
-                                                    TrustServerCertificate=True;"
+                                Database=PhoneBook;
+                                User Id=sa;
+                                Password=dockerStrongPwd123;
+                                Encrypt=False;
+                                TrustServerCertificate=True;"
             );
         }
 
