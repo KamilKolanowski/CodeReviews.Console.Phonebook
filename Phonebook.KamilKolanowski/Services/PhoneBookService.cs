@@ -15,12 +15,7 @@ internal class PhoneBookService
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                @"Server=localhost;
-                                Database=PhoneBook;
-                                User Id=sa;
-                                Password=dockerStrongPwd123;
-                                Encrypt=False;
-                                TrustServerCertificate=True;"
+                @"Server=localhost;Database=PhoneBook;User Id=sa;Password=dockerStrongPwd123;Encrypt=False;TrustServerCertificate=True;"
             );
         }
 
