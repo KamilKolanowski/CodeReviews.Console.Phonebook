@@ -1,6 +1,5 @@
 using System.Net.Mail;
 using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore;
 using Phonebook.KamilKolanowski.Models;
 using Spectre.Console;
 
@@ -8,29 +7,11 @@ namespace Phonebook.KamilKolanowski.Services;
 
 internal class PhoneBookService
 {
-    internal class AppDbContext : DbContext
+    internal void AddContact(PhoneBookMenu.ContactCategoryMenuType type)
     {
-        internal DbSet<Contact> Contacts { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        using (var context = new AppDb.AppDbContext())
         {
-            optionsBuilder.UseSqlServer(
-                @"Server=localhost;Database=PhoneBook;User Id=sa;Password=dockerStrongPwd123;Encrypt=False;TrustServerCertificate=True;"
-            );
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.HasDefaultSchema("TCSA");
-            base.OnModelCreating(modelBuilder);
-        }
-    }
-
-    internal void AddContact()
-    {
-        using (var context = new AppDbContext())
-        {
-            var newContact = CreateNewContact();
+            var newContact = CreateNewContact(type);
             context.Contacts.Add(newContact);
             context.SaveChanges();
         }
@@ -40,7 +21,7 @@ internal class PhoneBookService
 
     internal void DeleteContact(int id)
     {
-        using (var context = new AppDbContext())
+        using (var context = new AppDb.AppDbContext())
         {
             var contact = context.Contacts.Find(id);
             context.Contacts.Remove(contact);
@@ -52,7 +33,7 @@ internal class PhoneBookService
 
     internal void EditContact(int id, string columnToUpdate, string newValue)
     {
-        using (var context = new AppDbContext())
+        using (var context = new AppDb.AppDbContext())
         {
             var contact = context.Contacts.Find(id);
             if (contact == null)
@@ -80,7 +61,7 @@ internal class PhoneBookService
 
     internal List<Contact> GetContacts()
     {
-        using (var context = new AppDbContext())
+        using (var context = new AppDb.AppDbContext())
         {
             return context.Contacts.ToList();
         }
@@ -126,7 +107,7 @@ internal class PhoneBookService
         }
     }
 
-    private Contact CreateNewContact()
+    private Contact CreateNewContact(PhoneBookMenu.ContactCategoryMenuType category)
     {
         var firstName = AnsiConsole.Ask<string>("Enter first name: ");
         var lastName = AnsiConsole.Ask<string>("Enter last name: ");
@@ -147,6 +128,7 @@ internal class PhoneBookService
             LastName = lastName,
             Email = email,
             Phone = phone,
+            Category = category.ToString()
         };
     }
 

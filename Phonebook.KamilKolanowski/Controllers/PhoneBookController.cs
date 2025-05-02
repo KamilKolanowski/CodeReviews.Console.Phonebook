@@ -1,8 +1,8 @@
 using Phonebook.KamilKolanowski.Models;
-using static Phonebook.KamilKolanowski.Models.PhoneBookMenu;
 using Phonebook.KamilKolanowski.Services;
 using Phonebook.KamilKolanowski.Views;
 using Spectre.Console;
+using static Phonebook.KamilKolanowski.Models.PhoneBookMenu;
 
 namespace Phonebook.KamilKolanowski.Controllers;
 
@@ -30,7 +30,8 @@ internal class PhoneBookController
             var selectedContactType = AnsiConsole.Prompt(
                 new SelectionPrompt<ContactCategoryMenuType>()
                     .Title("Choose contact category")
-                    .AddChoices(Enum.GetValues<ContactCategoryMenuType>()));
+                    .AddChoices(Enum.GetValues<ContactCategoryMenuType>())
+            );
 
             switch (selectedOperation)
             {
@@ -55,7 +56,7 @@ internal class PhoneBookController
 
     private void AddContact(ContactCategoryMenuType type)
     {
-        _phoneBookService.AddContact();
+        _phoneBookService.AddContact(type);
     }
 
     private void DeleteContact(ContactCategoryMenuType type)

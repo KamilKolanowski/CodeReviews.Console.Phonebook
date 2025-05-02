@@ -26,6 +26,6 @@ internal class PhoneBookMenu
         Family,
         Friends,
         Work,
-        Other
+        Other,
     }
 }
