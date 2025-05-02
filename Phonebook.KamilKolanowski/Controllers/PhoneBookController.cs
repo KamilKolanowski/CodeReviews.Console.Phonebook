@@ -8,8 +8,8 @@ namespace Phonebook.KamilKolanowski.Controllers;
 
 internal class PhoneBookController
 {
-    PhoneBookService _phoneBookService = new PhoneBookService();
-    ViewPhoneBook _viewPhoneBook = new ViewPhoneBook();
+    PhoneBookService _phoneBookService = new();
+    ViewPhoneBook _viewPhoneBook = new();
 
     internal void ContactsOperation()
     {
@@ -60,7 +60,7 @@ internal class PhoneBookController
         _viewPhoneBook.ViewContacts();
 
         var rowIndexToDelete = AnsiConsole.Prompt(
-            new TextPrompt<int>("Select the contact number to delete: ").Validate(index =>
+            new TextPrompt<int>("Select the contact Id to delete: ").Validate(index =>
                 index > 0 && index <= contacts.Count
                     ? ValidationResult.Success()
                     : ValidationResult.Error("Invalid contact number.")
@@ -78,7 +78,7 @@ internal class PhoneBookController
         _viewPhoneBook.ViewContacts();
 
         var rowIndexToUpdate = AnsiConsole.Prompt(
-            new TextPrompt<int>("Select the contact number to edit: ").Validate(index =>
+            new TextPrompt<int>("Select the contact Id to edit: ").Validate(index =>
                 index > 0 && index <= contacts.Count
                     ? ValidationResult.Success()
                     : ValidationResult.Error("Invalid contact number.")
@@ -104,9 +104,22 @@ internal class PhoneBookController
             while (true)
             {
                 newValue = AnsiConsole.Ask<string>(
-                    $"Provide new value for {selectColumnToUpdate}: "
+                    $"Provide new value for {selectColumnToUpdate} [yellow](e.g. john.doe@gmail.com)[/]: "
                 );
                 var result = _phoneBookService.ValidateEmail(newValue);
+                if (result.Successful)
+                    break;
+                AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
+            }
+        }
+        else if (selectColumnToUpdate == "Phone Number")
+        {
+            while (true)
+            {
+                newValue = AnsiConsole.Ask<string>(
+                    $"Provide new value for {selectColumnToUpdate} [yellow](e.g. +123456789)[/]: "
+                );
+                var result = _phoneBookService.ValidatePhone(newValue);
                 if (result.Successful)
                     break;
                 AnsiConsole.MarkupLine($"[red]{result.Message}[/]");

@@ -20,4 +20,12 @@ internal class PhoneBookMenu
             { PhoneBookMenuType.ShowContact, "Show Contact(s)" },
             { PhoneBookMenuType.Exit, "Exit" },
         };
+
+    internal enum ContactCategoryMenuType
+    {
+        Family,
+        Friends,
+        Work,
+        Other
+    }
 }

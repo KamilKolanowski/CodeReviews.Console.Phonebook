@@ -93,14 +93,36 @@ internal class PhoneBookService
         {
             var addr = new MailAddress(emailAddress);
             if (!addr.Host.Contains('.'))
-                return ValidationResult.Error("Email domain must contain a dot.");
+                return ValidationResult.Error("[red]Email domain must contain a dot.[/]");
             if (!Regex.IsMatch(addr.Host, @"\.[a-zA-Z]{2,}$"))
-                return ValidationResult.Error("Email must have a valid domain suffix.");
+                return ValidationResult.Error("[red]Email must have a valid domain suffix.[/]");
             return ValidationResult.Success();
         }
         catch
         {
-            return ValidationResult.Error("Provided Email is not valid, please try again.");
+            return ValidationResult.Error("[red]Provided Email is not valid, please try again.[/]");
+        }
+    }
+
+    internal ValidationResult ValidatePhone(string phoneNumber)
+    {
+        phoneNumber = phoneNumber.Trim();
+        try
+        {
+            if (!Regex.IsMatch(phoneNumber, @"^\+\d{9}$"))
+            {
+                return ValidationResult.Error(
+                    "[red]Provided Phone Number is not valid, please try again.[/]"
+                );
+            }
+
+            return ValidationResult.Success();
+        }
+        catch
+        {
+            return ValidationResult.Error(
+                "[red]Provided Phone Number is not valid, please try again.[/]"
+            );
         }
     }
 
@@ -109,9 +131,15 @@ internal class PhoneBookService
         var firstName = AnsiConsole.Ask<string>("Enter first name: ");
         var lastName = AnsiConsole.Ask<string>("Enter last name: ");
         var email = AnsiConsole.Prompt(
-            new TextPrompt<string>("Enter email address: ").Validate(input => ValidateEmail(input))
+            new TextPrompt<string>(
+                "Enter email address [yellow](e.g. john.doe@gmail.com)[/]: "
+            ).Validate(input => ValidateEmail(input))
         );
-        var phone = AnsiConsole.Ask<string>("Enter phone number: ");
+        var phone = AnsiConsole.Prompt(
+            new TextPrompt<string>("Enter phone number [yellow](e.g. +123456789)[/]: ").Validate(
+                input => ValidatePhone(input)
+            )
+        );
 
         return new Contact
         {
