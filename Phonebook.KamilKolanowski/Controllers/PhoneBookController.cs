@@ -1,5 +1,5 @@
-using Microsoft.Extensions.Options;
 using Phonebook.KamilKolanowski.Models;
+using static Phonebook.KamilKolanowski.Models.PhoneBookMenu;
 using Phonebook.KamilKolanowski.Services;
 using Phonebook.KamilKolanowski.Views;
 using Spectre.Console;
@@ -20,40 +20,45 @@ internal class PhoneBookController
             var selectOperation = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("What would you like to do?")
-                    .AddChoices(PhoneBookMenu.Menu.Values)
+                    .AddChoices(Menu.Values)
             );
 
             var selectedOperation = PhoneBookMenu
                 .Menu.FirstOrDefault(v => v.Value == selectOperation)
                 .Key;
 
+            var selectedContactType = AnsiConsole.Prompt(
+                new SelectionPrompt<ContactCategoryMenuType>()
+                    .Title("Choose contact category")
+                    .AddChoices(Enum.GetValues<ContactCategoryMenuType>()));
+
             switch (selectedOperation)
             {
-                case PhoneBookMenu.PhoneBookMenuType.AddContact:
-                    AddContact();
+                case PhoneBookMenuType.AddContact:
+                    AddContact(selectedContactType);
                     break;
-                case PhoneBookMenu.PhoneBookMenuType.DeleteContact:
-                    DeleteContact();
+                case PhoneBookMenuType.DeleteContact:
+                    DeleteContact(selectedContactType);
                     break;
-                case PhoneBookMenu.PhoneBookMenuType.EditContact:
-                    EditContact();
+                case PhoneBookMenuType.EditContact:
+                    EditContact(selectedContactType);
                     break;
-                case PhoneBookMenu.PhoneBookMenuType.ShowContact:
-                    ViewContacts();
+                case PhoneBookMenuType.ShowContact:
+                    ViewContacts(selectedContactType);
                     break;
-                case PhoneBookMenu.PhoneBookMenuType.Exit:
+                case PhoneBookMenuType.Exit:
                     Environment.Exit(0);
                     break;
             }
         }
     }
 
-    private void AddContact()
+    private void AddContact(ContactCategoryMenuType type)
     {
         _phoneBookService.AddContact();
     }
 
-    private void DeleteContact()
+    private void DeleteContact(ContactCategoryMenuType type)
     {
         var contacts = _phoneBookService.GetContacts().ToList();
 
@@ -72,7 +77,7 @@ internal class PhoneBookController
         _phoneBookService.DeleteContact(contactId);
     }
 
-    private void EditContact()
+    private void EditContact(ContactCategoryMenuType type)
     {
         var contacts = _phoneBookService.GetContacts().ToList();
         _viewPhoneBook.ViewContacts();
@@ -133,7 +138,7 @@ internal class PhoneBookController
         _phoneBookService.EditContact(contactId, selectColumnToUpdate, newValue);
     }
 
-    private void ViewContacts()
+    private void ViewContacts(ContactCategoryMenuType type)
     {
         _viewPhoneBook.ViewContacts();
         AnsiConsole.MarkupLine("Press any key to continue...");
