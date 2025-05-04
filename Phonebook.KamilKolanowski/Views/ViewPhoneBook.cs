@@ -1,3 +1,4 @@
+using Phonebook.KamilKolanowski.Models;
 using Phonebook.KamilKolanowski.Services;
 using Spectre.Console;
 
@@ -7,9 +8,9 @@ internal class ViewPhoneBook
 {
     private readonly PhoneBookService _phoneBookService = new();
 
-    internal void ViewContacts()
+    internal void ViewContacts(PhoneBookMenu.ContactCategoryMenuType type)
     {
-        var contacts = _phoneBookService.GetContacts();
+        var contacts = _phoneBookService.GetContacts(type);
         var contactsTable = new Table();
 
         contactsTable.Title("[yellow]Phone Book[/]");

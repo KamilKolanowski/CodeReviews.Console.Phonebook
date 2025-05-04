@@ -56,45 +56,86 @@ internal class PhoneBookController
 
     private void AddContact(ContactCategoryMenuType type)
     {
-        _phoneBookService.AddContact(type);
+        while (true)
+        {
+            _phoneBookService.AddContact(type);
+            
+            var addAnother = AnsiConsole.Confirm($"Do you want to add another contact to {type} category?");
+            Console.Clear();
+            if (!addAnother) 
+                return;
+        }
+        
     }
 
     private void DeleteContact(ContactCategoryMenuType type)
     {
-        var contacts = _phoneBookService.GetContacts().ToList();
+        while (true)
+        {
+            var contacts = _phoneBookService.GetContacts(type).ToList();
 
-        _viewPhoneBook.ViewContacts();
+            if (!ValidateIfTableIsEmpty(contacts))
+            {
+                AnsiConsole.MarkupLine("[bold red]There's no contact to delete.[/]");
+                AnsiConsole.MarkupLine("Press any key to continue...");
+                Console.ReadKey();
+                return;
+            }
 
-        var rowIndexToDelete = AnsiConsole.Prompt(
-            new TextPrompt<int>("Select the contact Id to delete: ").Validate(index =>
-                index > 0 && index <= contacts.Count
-                    ? ValidationResult.Success()
-                    : ValidationResult.Error("Invalid contact number.")
-            )
-        );
+            _viewPhoneBook.ViewContacts(type);
 
-        var contactId = contacts[rowIndexToDelete - 1].Id;
+            var contactId = PromptForContactId(contacts);
+            _phoneBookService.DeleteContact(contactId);
 
-        _phoneBookService.DeleteContact(contactId);
+            var deleteAnother = AnsiConsole.Confirm("Do you want to delete another contact?");
+            Console.Clear();
+            if (!deleteAnother)
+                return;
+        }
     }
 
     private void EditContact(ContactCategoryMenuType type)
     {
-        var contacts = _phoneBookService.GetContacts().ToList();
-        _viewPhoneBook.ViewContacts();
+        while (true)
+        {
+            var contacts = _phoneBookService.GetContacts(type).ToList();
+            if (!ValidateIfTableIsEmpty(contacts))
+            {
+                AnsiConsole.MarkupLine("[bold red]There's no contact to edit.[/]");
+                return;
+            }
 
-        var rowIndexToUpdate = AnsiConsole.Prompt(
-            new TextPrompt<int>("Select the contact Id to edit: ").Validate(index =>
-                index > 0 && index <= contacts.Count
+            _viewPhoneBook.ViewContacts(type);
+            var contactId = PromptForContactId(contacts);
+            var column = PromptForColumnToEdit();
+            var newValue = PromptForNewValue(column);
+
+            _phoneBookService.EditContact(contactId, column, newValue);
+        
+            var editAnother = AnsiConsole.Confirm("Do you want to edit another contact?");
+            Console.Clear();
+            if (!editAnother)
+                return;
+        }
+    }
+
+    private int PromptForContactId(List<Contact> contacts)
+    {
+        var index = AnsiConsole.Prompt(
+            new TextPrompt<int>("Select the contact Id to edit: ").Validate(i =>
+                i > 0 && i <= contacts.Count
                     ? ValidationResult.Success()
                     : ValidationResult.Error("Invalid contact number.")
             )
         );
 
-        var contactId = contacts[rowIndexToUpdate - 1].Id;
+        return contacts[index - 1].Id;
+    }
 
+    private string PromptForColumnToEdit()
+    {
         AnsiConsole.MarkupLine("\nSelect the column to edit");
-        var selectColumnToUpdate = AnsiConsole.Prompt(
+        return AnsiConsole.Prompt(
             new SelectionPrompt<string>().AddChoices(
                 "First Name",
                 "Last Name",
@@ -102,47 +143,41 @@ internal class PhoneBookController
                 "Phone Number"
             )
         );
-
-        string newValue;
-
-        if (selectColumnToUpdate == "Email Address")
-        {
-            while (true)
-            {
-                newValue = AnsiConsole.Ask<string>(
-                    $"Provide new value for {selectColumnToUpdate} [yellow](e.g. john.doe@gmail.com)[/]: "
-                );
-                var result = _phoneBookService.ValidateEmail(newValue);
-                if (result.Successful)
-                    break;
-                AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
-            }
-        }
-        else if (selectColumnToUpdate == "Phone Number")
-        {
-            while (true)
-            {
-                newValue = AnsiConsole.Ask<string>(
-                    $"Provide new value for {selectColumnToUpdate} [yellow](e.g. +123456789)[/]: "
-                );
-                var result = _phoneBookService.ValidatePhone(newValue);
-                if (result.Successful)
-                    break;
-                AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
-            }
-        }
-        else
-        {
-            newValue = AnsiConsole.Ask<string>($"Provide new value for {selectColumnToUpdate}: ");
-        }
-
-        _phoneBookService.EditContact(contactId, selectColumnToUpdate, newValue);
     }
 
+    private string PromptForNewValue(string column)
+    {
+        while (true)
+        {
+            var input = AnsiConsole.Ask<string>($"Provide new value for {column}: ");
+
+            if (column == "Email Address")
+            {
+                var result = _phoneBookService.ValidateEmail(input);
+                if (result.Successful) return input;
+                AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
+            }
+            else if (column == "Phone Number")
+            {
+                var result = _phoneBookService.ValidatePhone(input);
+                if (result.Successful) return input;
+                AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
+            }
+            else
+            {
+                return input;
+            }
+        }
+    }
     private void ViewContacts(ContactCategoryMenuType type)
     {
-        _viewPhoneBook.ViewContacts();
+        _viewPhoneBook.ViewContacts(type);
         AnsiConsole.MarkupLine("Press any key to continue...");
         Console.ReadKey();
+    }
+    
+    private bool ValidateIfTableIsEmpty(List<Contact> contacts)
+    {
+        return contacts.Any();
     }
 }

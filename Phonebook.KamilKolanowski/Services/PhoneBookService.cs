@@ -59,11 +59,11 @@ internal class PhoneBookService
         ReturnStatusMessage("updated");
     }
 
-    internal List<Contact> GetContacts()
+    internal List<Contact> GetContacts(PhoneBookMenu.ContactCategoryMenuType category)
     {
         using (var context = new AppDb.AppDbContext())
         {
-            return context.Contacts.ToList();
+            return context.Contacts.Where(c => c.Category == category.ToString()).ToList();
         }
     }
 
@@ -106,7 +106,7 @@ internal class PhoneBookService
             );
         }
     }
-
+    
     private Contact CreateNewContact(PhoneBookMenu.ContactCategoryMenuType category)
     {
         var firstName = AnsiConsole.Ask<string>("Enter first name: ");
