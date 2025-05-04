@@ -23,8 +23,8 @@ internal class PhoneBookController
                     .AddChoices(Menu.Values)
             );
 
-            var selectedOperation = PhoneBookMenu
-                .Menu.FirstOrDefault(v => v.Value == selectOperation)
+            var selectedOperation = 
+                Menu.FirstOrDefault(v => v.Value == selectOperation)
                 .Key;
 
             var selectedContactType = AnsiConsole.Prompt(
@@ -47,9 +47,8 @@ internal class PhoneBookController
                 case PhoneBookMenuType.ShowContact:
                     ViewContacts(selectedContactType);
                     break;
-                case PhoneBookMenuType.Exit:
-                    Environment.Exit(0);
-                    break;
+                case PhoneBookMenuType.GoBack:
+                    break; // Fix the issue here to go back to main menu
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Phonebook.KamilKolanowski.Controllers;
+using Phonebook.KamilKolanowski.Views;
 
 namespace Phonebook.KamilKolanowski;
 
@@ -6,7 +7,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        PhoneBookController phoneBookController = new PhoneBookController();
-        phoneBookController.ContactsOperation();
+        MainInterface mainInterface = new();
+        mainInterface.Run();
     }
 }

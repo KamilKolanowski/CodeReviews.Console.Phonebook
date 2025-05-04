@@ -8,7 +8,7 @@ internal class PhoneBookMenu
         DeleteContact,
         EditContact,
         ShowContact,
-        Exit,
+        GoBack
     }
 
     internal static Dictionary<PhoneBookMenuType, string> Menu { get; } =
@@ -18,7 +18,7 @@ internal class PhoneBookMenu
             { PhoneBookMenuType.DeleteContact, "Delete Contact" },
             { PhoneBookMenuType.EditContact, "Edit Contact" },
             { PhoneBookMenuType.ShowContact, "Show Contact(s)" },
-            { PhoneBookMenuType.Exit, "Exit" },
+            { PhoneBookMenuType.GoBack, "Back" },
         };
 
     internal enum ContactCategoryMenuType
@@ -28,4 +28,19 @@ internal class PhoneBookMenu
         Work,
         Other,
     }
+
+    internal enum MainMenu
+    {
+        ManageContacts,
+        SendMessages,
+        Exit,
+    }
+
+    internal static Dictionary<MainMenu, string> MainMenuOptions { get; } =
+        new()
+        {
+            { MainMenu.ManageContacts, "Manage Contacts" },
+            { MainMenu.SendMessages, "Send Message" },
+            { MainMenu.Exit, "Exit" },
+        };
 }
