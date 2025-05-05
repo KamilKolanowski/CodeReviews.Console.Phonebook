@@ -67,6 +67,14 @@ internal class PhoneBookService
         }
     }
 
+    internal List<Contact> GetAllContacts()
+    {
+        using (var context = new AppDb.AppDbContext())
+        {
+            return context.Contacts.ToList();
+        }
+    }
+
     internal ValidationResult ValidateEmail(string emailAddress)
     {
         emailAddress = emailAddress.Trim();

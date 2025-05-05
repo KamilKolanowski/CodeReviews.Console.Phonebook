@@ -8,6 +8,7 @@ internal class PhoneBookMenu
         DeleteContact,
         EditContact,
         ShowContact,
+        ShowAllContacts,
         GoBack
     }
 
@@ -18,6 +19,7 @@ internal class PhoneBookMenu
             { PhoneBookMenuType.DeleteContact, "Delete Contact" },
             { PhoneBookMenuType.EditContact, "Edit Contact" },
             { PhoneBookMenuType.ShowContact, "Show Contact(s)" },
+            { PhoneBookMenuType.ShowAllContacts, "Show All Contacts" },
             { PhoneBookMenuType.GoBack, "Back" },
         };
 

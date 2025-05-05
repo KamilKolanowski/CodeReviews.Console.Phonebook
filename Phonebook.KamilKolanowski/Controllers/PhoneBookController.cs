@@ -24,34 +24,47 @@ internal class PhoneBookController
             );
 
             var selectedOperation = 
-                Menu.FirstOrDefault(v => v.Value == selectOperation)
-                .Key;
-
-            var selectedContactType = AnsiConsole.Prompt(
-                new SelectionPrompt<ContactCategoryMenuType>()
-                    .Title("Choose contact category")
-                    .AddChoices(Enum.GetValues<ContactCategoryMenuType>())
-            );
+                Menu.FirstOrDefault(v => v.Value == selectOperation).Key;
 
             switch (selectedOperation)
             {
                 case PhoneBookMenuType.AddContact:
-                    AddContact(selectedContactType);
-                    break;
                 case PhoneBookMenuType.DeleteContact:
-                    DeleteContact(selectedContactType);
-                    break;
                 case PhoneBookMenuType.EditContact:
-                    EditContact(selectedContactType);
-                    break;
                 case PhoneBookMenuType.ShowContact:
-                    ViewContacts(selectedContactType);
+                    var selectedContactType = AnsiConsole.Prompt(
+                        new SelectionPrompt<ContactCategoryMenuType>()
+                            .Title("Choose contact category")
+                            .AddChoices(Enum.GetValues<ContactCategoryMenuType>())
+                    );
+                    
+                    switch (selectedOperation)
+                    {
+                        case PhoneBookMenuType.AddContact:
+                            AddContact(selectedContactType);
+                            break;
+                        case PhoneBookMenuType.DeleteContact:
+                            DeleteContact(selectedContactType);
+                            break;
+                        case PhoneBookMenuType.EditContact:
+                            EditContact(selectedContactType);
+                            break;
+                        case PhoneBookMenuType.ShowContact:
+                            ViewContacts(selectedContactType);
+                            break;
+                        
+                    }
+                    break;
+
+                case PhoneBookMenuType.ShowAllContacts:
+                    ViewAllContacts();
                     break;
                 case PhoneBookMenuType.GoBack:
-                    break; // Fix the issue here to go back to main menu
+                    return;
             }
         }
     }
+
 
     private void AddContact(ContactCategoryMenuType type)
     {
@@ -171,6 +184,13 @@ internal class PhoneBookController
     private void ViewContacts(ContactCategoryMenuType type)
     {
         _viewPhoneBook.ViewContacts(type);
+        AnsiConsole.MarkupLine("Press any key to continue...");
+        Console.ReadKey();
+    }
+
+    private void ViewAllContacts()
+    {
+        _viewPhoneBook.ViewAllContacts();
         AnsiConsole.MarkupLine("Press any key to continue...");
         Console.ReadKey();
     }
