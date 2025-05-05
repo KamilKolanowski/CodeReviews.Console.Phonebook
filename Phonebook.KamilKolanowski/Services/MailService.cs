@@ -2,27 +2,49 @@ using Phonebook.KamilKolanowski.Models;
 using Spectre.Console;
 using MailKit.Net.Smtp;
 using MimeKit;
-using MailKit;
+using Microsoft.Extensions.Configuration;
+
 namespace Phonebook.KamilKolanowski.Services;
 
 internal class MailService
 {
-    internal void SendMail()
+    internal SmtpSettings CreateSmtpSettings()
     {
-        using (var client = new SmtpClient ()) {
-            client.Connect ("smtp.gmail.com", 587, false);
-            client.Authenticate ("", "");
-            client.Send (CreateMail());
-            client.Disconnect (true);
-        }
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        var smtpSettings = configuration.GetSection("Smtp").Get<SmtpSettings>();
+        return smtpSettings;
     }
     
-    private MimeMessage CreateMail()
+    internal void SendMail()
+    {
+        var smtp = CreateSmtpSettings();
+        
+        var message = CreateMail(smtp.Username);
+        
+        using (var client = new SmtpClient())
+        {
+            client.Connect(smtp.Host, smtp.Port, smtp.UseSsl);
+            client.Authenticate(smtp.Username, smtp.Password);
+            client.Send(message);
+            client.Disconnect(true);
+        }
+        
+        AnsiConsole.MarkupLine("[green]Message Sent![/]");
+        AnsiConsole.MarkupLine("Press any key to continue...");
+        Console.ReadKey();
+        Console.Clear();
+    }
+    
+    private MimeMessage CreateMail(string sender)
     {
         var message = new MimeMessage ();
         var newMail = CreateMessage();
-        message.From.Add (new MailboxAddress ("Test", "@gmail.com"));
-        message.To.Add (new MailboxAddress ("Test", newMail.Recipient));
+        message.From.Add (new MailboxAddress ("PhonebookApp", sender));
+        message.To.Add (new MailboxAddress ("Receiver", newMail.Recipient));
         message.Subject = newMail.Subject;
         message.Body = newMail.Body;
         
