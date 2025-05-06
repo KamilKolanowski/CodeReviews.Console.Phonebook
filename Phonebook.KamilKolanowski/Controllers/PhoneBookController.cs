@@ -1,3 +1,4 @@
+using Phonebook.KamilKolanowski.Helpers;
 using Phonebook.KamilKolanowski.Models;
 using Phonebook.KamilKolanowski.Services;
 using Phonebook.KamilKolanowski.Views;
@@ -8,8 +9,9 @@ namespace Phonebook.KamilKolanowski.Controllers;
 
 internal class PhoneBookController
 {
-    PhoneBookService _phoneBookService = new();
-    ViewPhoneBook _viewPhoneBook = new();
+    private readonly PhoneBookService _phoneBookService = new();
+    private readonly ViewPhoneBook _viewPhoneBook = new();
+    private readonly PromptHelper _promptHelper = new();
 
     internal void ContactsOperation()
     {
@@ -96,7 +98,7 @@ internal class PhoneBookController
 
             _viewPhoneBook.ViewContacts(type);
 
-            var contactId = PromptForContactId(contacts);
+            var contactId = _promptHelper.PromptForContactId(contacts);
             _phoneBookService.DeleteContact(contactId);
 
             var deleteAnother = AnsiConsole.Confirm("Do you want to delete another contact?");
@@ -114,13 +116,15 @@ internal class PhoneBookController
             if (!ValidateIfTableIsEmpty(contacts))
             {
                 AnsiConsole.MarkupLine("[bold red]There's no contact to edit.[/]");
+                AnsiConsole.MarkupLine("Press any key to continue...");
+                Console.ReadKey();
                 return;
             }
 
             _viewPhoneBook.ViewContacts(type);
-            var contactId = PromptForContactId(contacts);
-            var column = PromptForColumnToEdit();
-            var newValue = PromptForNewValue(column);
+            var contactId = _promptHelper.PromptForContactId(contacts);
+            var column = _promptHelper.PromptForColumnToEdit();
+            var newValue = _promptHelper.PromptForNewValue(column);
 
             _phoneBookService.EditContact(contactId, column, newValue);
         
@@ -130,57 +134,7 @@ internal class PhoneBookController
                 return;
         }
     }
-
-    private int PromptForContactId(List<Contact> contacts)
-    {
-        var index = AnsiConsole.Prompt(
-            new TextPrompt<int>("Select the contact Id to edit: ").Validate(i =>
-                i > 0 && i <= contacts.Count
-                    ? ValidationResult.Success()
-                    : ValidationResult.Error("Invalid contact number.")
-            )
-        );
-
-        return contacts[index - 1].Id;
-    }
-
-    private string PromptForColumnToEdit()
-    {
-        AnsiConsole.MarkupLine("\nSelect the column to edit");
-        return AnsiConsole.Prompt(
-            new SelectionPrompt<string>().AddChoices(
-                "First Name",
-                "Last Name",
-                "Email Address",
-                "Phone Number"
-            )
-        );
-    }
-
-    private string PromptForNewValue(string column)
-    {
-        while (true)
-        {
-            var input = AnsiConsole.Ask<string>($"Provide new value for {column}: ");
-
-            if (column == "Email Address")
-            {
-                var result = _phoneBookService.ValidateEmail(input);
-                if (result.Successful) return input;
-                AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
-            }
-            else if (column == "Phone Number")
-            {
-                var result = _phoneBookService.ValidatePhone(input);
-                if (result.Successful) return input;
-                AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
-            }
-            else
-            {
-                return input;
-            }
-        }
-    }
+    
     private void ViewContacts(ContactCategoryMenuType type)
     {
         _viewPhoneBook.ViewContacts(type);

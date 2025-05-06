@@ -7,8 +7,9 @@ namespace Phonebook.KamilKolanowski.Views;
 
 internal class MainInterface
 {
-    private PhoneBookController _phoneBookController = new();
-    private MailService _mailService = new();
+    private readonly PhoneBookController _phoneBookController = new();
+    private readonly MailService _mailService = new();
+    private readonly MailController _mailController = new();
     
     internal void Run()
     {
@@ -27,7 +28,7 @@ internal class MainInterface
                     _phoneBookController.ContactsOperation();
                     break;
                 case MainMenu.SendMessages:
-                    _mailService.SendMail();
+                    _mailController.MailOperation();
                     break;
                 case MainMenu.Exit:
                     Environment.Exit(0);

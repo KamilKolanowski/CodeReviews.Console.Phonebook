@@ -8,22 +8,11 @@ namespace Phonebook.KamilKolanowski.Services;
 
 internal class MailService
 {
-    internal SmtpSettings CreateSmtpSettings()
-    {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
-
-        var smtpSettings = configuration.GetSection("Smtp").Get<SmtpSettings>();
-        return smtpSettings;
-    }
-    
-    internal void SendMail()
+    internal void SendMail(string recipient)
     {
         var smtp = CreateSmtpSettings();
         
-        var message = CreateMail(smtp.Username);
+        var message = CreateMail(smtp.Username, recipient);
         
         using (var client = new SmtpClient())
         {
@@ -39,12 +28,23 @@ internal class MailService
         Console.Clear();
     }
     
-    private MimeMessage CreateMail(string sender)
+    private SmtpSettings CreateSmtpSettings()
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        var smtpSettings = configuration.GetSection("Smtp").Get<SmtpSettings>();
+        return smtpSettings;
+    }
+    
+    private MimeMessage CreateMail(string sender, string recipient)
     {
         var message = new MimeMessage ();
         var newMail = CreateMessage();
         message.From.Add (new MailboxAddress ("PhonebookApp", sender));
-        message.To.Add (new MailboxAddress ("Receiver", newMail.Recipient));
+        message.To.Add (new MailboxAddress ("Receiver", recipient));
         message.Subject = newMail.Subject;
         message.Body = newMail.Body;
         
@@ -53,14 +53,12 @@ internal class MailService
     
     private Mail CreateMessage()
     {
-        var recipient = AnsiConsole.Ask<string>("Specify recipient: ");
         var subject = AnsiConsole.Ask<string>("Specify title: ");
         var body = new TextPart ("plain") {
             Text = AnsiConsole.Ask<string>("Write your message: ")};
     
         var mail = new Mail
         {
-            Recipient = recipient,
             Subject = subject,
             Body = body
         };
