@@ -83,7 +83,7 @@ The app leverages the following NuGet packages:
 9. [Spectre.Console](https://www.nuget.org/packages/Spectre.Console)  
    For creating a rich console UI.
 
-10. [Twilio](https://www.nuget.org/packages/twilio/)
+10. [Twilio](https://www.nuget.org/packages/twilio/)  
     For sending messages via SMS.
 
 ---
