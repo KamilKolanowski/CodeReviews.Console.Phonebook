@@ -25,8 +25,7 @@ internal class PhoneBookController
                     .AddChoices(Menu.Values)
             );
 
-            var selectedOperation = 
-                Menu.FirstOrDefault(v => v.Value == selectOperation).Key;
+            var selectedOperation = Menu.FirstOrDefault(v => v.Value == selectOperation).Key;
 
             switch (selectedOperation)
             {
@@ -39,7 +38,7 @@ internal class PhoneBookController
                             .Title("Choose contact category")
                             .AddChoices(Enum.GetValues<ContactCategoryMenuType>())
                     );
-                    
+
                     switch (selectedOperation)
                     {
                         case PhoneBookMenuType.AddContact:
@@ -54,7 +53,6 @@ internal class PhoneBookController
                         case PhoneBookMenuType.ShowContact:
                             ViewContacts(selectedContactType);
                             break;
-                        
                     }
                     break;
 
@@ -67,19 +65,19 @@ internal class PhoneBookController
         }
     }
 
-
     private void AddContact(ContactCategoryMenuType type)
     {
         while (true)
         {
             _phoneBookService.AddContact(type);
-            
-            var addAnother = AnsiConsole.Confirm($"Do you want to add another contact to {type} category?");
+
+            var addAnother = AnsiConsole.Confirm(
+                $"Do you want to add another contact to {type} category?"
+            );
             Console.Clear();
-            if (!addAnother) 
+            if (!addAnother)
                 return;
         }
-        
     }
 
     private void DeleteContact(ContactCategoryMenuType type)
@@ -127,14 +125,14 @@ internal class PhoneBookController
             var newValue = _promptHelper.PromptForNewValue(column);
 
             _phoneBookService.EditContact(contactId, column, newValue);
-        
+
             var editAnother = AnsiConsole.Confirm("Do you want to edit another contact?");
             Console.Clear();
             if (!editAnother)
                 return;
         }
     }
-    
+
     private void ViewContacts(ContactCategoryMenuType type)
     {
         _viewPhoneBook.ViewContacts(type);
@@ -148,7 +146,7 @@ internal class PhoneBookController
         AnsiConsole.MarkupLine("Press any key to continue...");
         Console.ReadKey();
     }
-    
+
     private bool ValidateIfTableIsEmpty(List<Contact> contacts)
     {
         return contacts.Any();

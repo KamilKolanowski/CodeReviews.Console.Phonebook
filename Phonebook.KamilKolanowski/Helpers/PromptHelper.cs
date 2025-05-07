@@ -7,7 +7,7 @@ namespace Phonebook.KamilKolanowski.Helpers;
 internal class PromptHelper
 {
     private readonly PhoneBookService _phoneBookService = new();
-    
+
     internal int PromptForContactId(List<Contact> contacts)
     {
         var index = AnsiConsole.Prompt(
@@ -43,13 +43,15 @@ internal class PromptHelper
             if (column == "Email Address")
             {
                 var result = _phoneBookService.ValidateEmail(input);
-                if (result.Successful) return input;
+                if (result.Successful)
+                    return input;
                 AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
             }
             else if (column == "Phone Number")
             {
                 var result = _phoneBookService.ValidatePhone(input);
-                if (result.Successful) return input;
+                if (result.Successful)
+                    return input;
                 AnsiConsole.MarkupLine($"[red]{result.Message}[/]");
             }
             else

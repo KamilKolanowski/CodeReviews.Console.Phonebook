@@ -1,16 +1,15 @@
 using Phonebook.KamilKolanowski.Controllers;
 using Phonebook.KamilKolanowski.Services;
-using static Phonebook.KamilKolanowski.Models.PhoneBookMenu;
 using Spectre.Console;
+using static Phonebook.KamilKolanowski.Models.PhoneBookMenu;
 
 namespace Phonebook.KamilKolanowski.Views;
 
 internal class MainInterface
 {
     private readonly PhoneBookController _phoneBookController = new();
-    private readonly MailService _mailService = new();
-    private readonly MailController _mailController = new();
-    
+    private readonly MessageController _messageController = new();
+
     internal void Run()
     {
         while (true)
@@ -18,9 +17,12 @@ internal class MainInterface
             var selectMenuOption = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Choose option from the menu")
-                    .AddChoices(MainMenuOptions.Values));
-        
-            var selectedMenuOption = MainMenuOptions.FirstOrDefault(v => v.Value == selectMenuOption).Key;
+                    .AddChoices(MainMenuOptions.Values)
+            );
+
+            var selectedMenuOption = MainMenuOptions
+                .FirstOrDefault(v => v.Value == selectMenuOption)
+                .Key;
 
             switch (selectedMenuOption)
             {
@@ -28,7 +30,7 @@ internal class MainInterface
                     _phoneBookController.ContactsOperation();
                     break;
                 case MainMenu.SendMessages:
-                    _mailController.MailOperation();
+                    _messageController.SendMessage();
                     break;
                 case MainMenu.Exit:
                     Environment.Exit(0);

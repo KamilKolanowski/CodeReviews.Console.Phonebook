@@ -9,7 +9,7 @@ internal class PhoneBookMenu
         EditContact,
         ShowContact,
         ShowAllContacts,
-        GoBack
+        GoBack,
     }
 
     internal static Dictionary<PhoneBookMenuType, string> Menu { get; } =

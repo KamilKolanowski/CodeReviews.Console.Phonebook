@@ -1,8 +1,8 @@
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 using Phonebook.KamilKolanowski.Models;
 using Spectre.Console;
-using MailKit.Net.Smtp;
-using MimeKit;
-using Microsoft.Extensions.Configuration;
 
 namespace Phonebook.KamilKolanowski.Services;
 
@@ -11,9 +11,9 @@ internal class MailService
     internal void SendMail(string recipient)
     {
         var smtp = CreateSmtpSettings();
-        
+
         var message = CreateMail(smtp.Username, recipient);
-        
+
         using (var client = new SmtpClient())
         {
             client.Connect(smtp.Host, smtp.Port, smtp.UseSsl);
@@ -21,13 +21,13 @@ internal class MailService
             client.Send(message);
             client.Disconnect(true);
         }
-        
+
         AnsiConsole.MarkupLine("[green]Message Sent![/]");
         AnsiConsole.MarkupLine("Press any key to continue...");
         Console.ReadKey();
         Console.Clear();
     }
-    
+
     private SmtpSettings CreateSmtpSettings()
     {
         var configuration = new ConfigurationBuilder()
@@ -38,32 +38,26 @@ internal class MailService
         var smtpSettings = configuration.GetSection("Smtp").Get<SmtpSettings>();
         return smtpSettings;
     }
-    
+
     private MimeMessage CreateMail(string sender, string recipient)
     {
-        var message = new MimeMessage ();
+        var message = new MimeMessage();
         var newMail = CreateMessage();
-        message.From.Add (new MailboxAddress ("PhonebookApp", sender));
-        message.To.Add (new MailboxAddress ("Receiver", recipient));
+        message.From.Add(new MailboxAddress("PhonebookApp", sender));
+        message.To.Add(new MailboxAddress("Receiver", recipient));
         message.Subject = newMail.Subject;
         message.Body = newMail.Body;
-        
+
         return message;
     }
-    
+
     private Mail CreateMessage()
     {
         var subject = AnsiConsole.Ask<string>("Specify title: ");
-        var body = new TextPart ("plain") {
-            Text = AnsiConsole.Ask<string>("Write your message: ")};
-    
-        var mail = new Mail
-        {
-            Subject = subject,
-            Body = body
-        };
-        
+        var body = new TextPart("plain") { Text = AnsiConsole.Ask<string>("Write your message: ") };
+
+        var mail = new Mail { Subject = subject, Body = body };
+
         return mail;
     }
 }
-

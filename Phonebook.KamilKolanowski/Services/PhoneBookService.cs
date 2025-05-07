@@ -114,7 +114,7 @@ internal class PhoneBookService
             );
         }
     }
-    
+
     private Contact CreateNewContact(PhoneBookMenu.ContactCategoryMenuType category)
     {
         var firstName = AnsiConsole.Ask<string>("Enter first name: ");
@@ -136,7 +136,7 @@ internal class PhoneBookService
             LastName = lastName,
             Email = email,
             Phone = phone,
-            Category = category.ToString()
+            Category = category.ToString(),
         };
     }
 

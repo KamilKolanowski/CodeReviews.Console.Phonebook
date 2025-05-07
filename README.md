@@ -39,7 +39,7 @@ Modify the `appsettings.json` file to match the following:
 
 1. Your database server credentials.
 2. Your Gmail SMTP **Username** and **Password** for sending emails.
-
+3. Your Twilio **Account SID** and **Authorization Token** for sending SMS.
 ---
 
 ## Prerequisites
@@ -92,7 +92,7 @@ Once the database tables are created and the `appsettings.json` file is configur
 1. Run the application using the .NET CLI or your preferred IDE.
 2. Use the console interface to:
     - Manage contacts (add, update, delete, view).
-    - Send emails to specific contacts from your Phone Book.
+    - Send emails or SMS (*Added in code +48 to match Polish Numbers, you can adjust it to your needs in **SmsOperation() within MessageController.cs**.*) to specific contacts from your Phone Book.
 
 ---
 

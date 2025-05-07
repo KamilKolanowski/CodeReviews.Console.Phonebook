@@ -17,7 +17,7 @@ public class AppDb
                 .Build();
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            
+
             optionsBuilder.UseSqlServer(connectionString);
         }
 

@@ -39,7 +39,7 @@ internal class ViewPhoneBook
 
         AnsiConsole.Write(contactsTable);
     }
-    
+
     internal void ViewAllContacts()
     {
         var contacts = _phoneBookService.GetAllContacts();
